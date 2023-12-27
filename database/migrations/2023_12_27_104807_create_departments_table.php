@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->bigInteger('user_id')->default(0);
+            $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by')->unsigned()->nullable()->default(NULL);
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('company_id')->references('id')->on('companies');
-            $table->rememberToken();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade'); //it can be any super role such as hr/admin
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('departments');
     }
 };
