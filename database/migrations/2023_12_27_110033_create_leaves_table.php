@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('employee_id')->unsigned()->nullable(); //can be self
-            $table->bigInteger('leave_type_id')->unsigned()->nullable();
+            $table->bigInteger('employee_id')->unsigned()->nullable()->default(NULL);
+            $table->bigInteger('leave_type_id')->unsigned()->nullable()->default(NULL);
             $table->date('from');
             $table->date('to');
             $table->text('reason');
@@ -23,12 +23,11 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->bigInteger('created_by')->unsigned()->nullable()->default(NULL); //it can be any super role such as hr
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('employee_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
 
             // Foreign key relationships
-            $table->foreign('employee_id')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('set null');
+            $table->foreign('employee_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('cascade');
         });
     }
 

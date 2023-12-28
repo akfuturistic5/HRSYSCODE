@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->bigInteger('created_by')->unsigned()->nullable()->default(NULL);
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('company_id')->unsigned()->nullable()->default(NULL);
             $table->foreign('company_id')->references('id')->on('companies');
             $table->rememberToken();
             $table->timestamps();

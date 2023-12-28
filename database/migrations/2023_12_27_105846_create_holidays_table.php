@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('holidays', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->default(0);
             $table->string('name');
             $table->date('holiday_date');
             $table->date('end_date');
@@ -21,6 +20,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by')->unsigned()->nullable()->default(NULL);
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade'); //it can be any super role such as hr
+            $table->bigInteger('user_id')->unsigned()->nullable()->default(NULL);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
