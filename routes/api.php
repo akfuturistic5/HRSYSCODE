@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\DesignationController;
+use App\Http\Controllers\API\HolidayController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/adminlogin', [UserController::class, 'adminlogin']);
 Route::get('/createuser', [UserController::class, 'createuser']);
 
-//Route::group(['middleware' => ['auth:superadmin-api', 'superadmin']], function () {
+Route::group(['middleware' => ['auth:superadmin-api']], function () {
 	
 Route::group(['prefix' => 'departments'], function () {
 	Route::get('/', [DepartmentController::class, 'index']);
@@ -31,7 +33,24 @@ Route::group(['prefix' => 'departments'], function () {
 	Route::put('{id}', [DepartmentController::class, 'update']);
 	Route::delete('{id}', [DepartmentController::class, 'destroy']);
 });
-		
-//});
+
+Route::group(['prefix' => 'designations'], function () {
+	Route::get('/', [DesignationController::class, 'index']);
+	Route::post('/', [DesignationController::class, 'store']);
+	Route::get('/{id}/detail', [DesignationController::class, 'detail']);
+	Route::put('{id}', [DesignationController::class, 'update']);
+	Route::delete('{id}', [DesignationController::class, 'destroy']);
+});
+
+
+Route::group(['prefix' => 'holidays'], function () {
+	Route::get('/', [HolidayController::class, 'index']);
+	Route::post('/', [HolidayController::class, 'store']);
+	Route::get('/{id}/detail', [HolidayController::class, 'detail']);
+	Route::put('{id}', [HolidayController::class, 'update']);
+	Route::delete('{id}', [HolidayController::class, 'destroy']);
+});
+
+});
 
 
