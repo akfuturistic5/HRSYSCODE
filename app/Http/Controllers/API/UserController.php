@@ -26,6 +26,10 @@ class UserController extends Controller
 		$this->warningCode = 500;
 	}
 
+	public function index(Request $request){
+		return response()->json(['message'=>__('messages')], $this->successCode);
+	}
+
 	public function adminlogin(Request $request){
 		
 		
