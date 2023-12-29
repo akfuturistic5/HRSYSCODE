@@ -6,6 +6,7 @@ use App\Http\Controllers\API\DepartmentController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DesignationController;
 use App\Http\Controllers\API\HolidayController;
+use App\Http\Controllers\API\LeaveController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -49,6 +50,14 @@ Route::group(['prefix' => 'holidays'], function () {
 	Route::get('/{id}/detail', [HolidayController::class, 'detail']);
 	Route::put('{id}', [HolidayController::class, 'update']);
 	Route::delete('{id}', [HolidayController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'leaves'], function () {
+	Route::get('/', [LeaveController::class, 'index']);
+	Route::post('/', [LeaveController::class, 'store']);
+	Route::get('/{id}/detail', [LeaveController::class, 'detail']);
+	Route::put('{id}', [LeaveController::class, 'update']);
+	Route::delete('{id}', [LeaveController::class, 'destroy']);
 });
 
 });
