@@ -3,7 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
+// mokshes shah start
 use App\Http\Controllers\API\WagesController;
+use App\Http\Controllers\API\ContracttypeController;
+// mokshes shah end
 use App\Http\Controllers\API\UserController;
 
 /*
@@ -44,7 +47,23 @@ Route::group(['prefix' => 'wages'], function () {
 	Route::put('{id}', [WagesController::class, 'update']);
 	Route::delete('{id}', [WagesController::class, 'destroy']);
 });
-		
+
+Route::group(['prefix' => 'wages'], function () {
+	Route::get('/', [WagesController::class, 'index']);
+	Route::post('/', [WagesController::class, 'store']);
+	Route::get('/{id}/detail', [WagesController::class, 'detail']);
+	Route::put('{id}', [WagesController::class, 'update']);
+	Route::delete('{id}', [WagesController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'contracttype'], function () {
+	Route::get('/', [ContracttypeController::class, 'index']);
+	Route::post('/', [ContracttypeController::class, 'store']);
+	Route::get('/{id}/detail', [ContracttypeController::class, 'detail']);
+	Route::put('{id}', [ContracttypeController::class, 'update']);
+	Route::delete('{id}', [ContracttypeController::class, 'destroy']);
+});
+
 //});
 
 
