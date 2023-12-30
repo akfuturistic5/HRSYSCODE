@@ -15,9 +15,8 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 
-class DepartmentController extends Controller
+class DesignationController extends Controller
 {
-	//test
 	public function __construct() {
 		$this->limit = 10;
 		$this->successCode = 200;
@@ -28,9 +27,8 @@ class DepartmentController extends Controller
 	public function index(Request $request){
 		
 		try {
-		
 			
-			$record = Models\Department::where('status',1)->paginate($this->limit);
+			$record = Models\Designation::with('department')->where('status',1)->orderBy('id','desc')->paginate($this->limit);
 			if(empty($record)){
 				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
 			}
@@ -56,23 +54,25 @@ class DepartmentController extends Controller
 			$userId = Auth::user()->id;
 			
 			$rules = [
-				'department_name'  => 'required',
+				'designation_name'=>'required',
+				'department'=>'required|exists:departments,id',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
 
 			if ($validator->fails()) {
 				DB::rollBack();
-				return response()->json(['message' => $validator->errors()->first(),'error' => $validator->errors()], 404);      
+				return response()->json(['message' => $validator->errors()->first(),'error' => $validator->errors()], $this->warningCode);      
 			}
 			
 			$inputTab = [
-				'name'=>$request->department_name,
+				'name'=>$request->designation_name,
+				'department_id'=>$request->department,
 				'status' => 1,
 				'user_id' => $userId
 			];
 			
-			$modifier = Models\Department::create($inputTab);
+			$modifier = Models\Designation::create($inputTab);
 			
 			DB::commit();
 			
@@ -95,9 +95,9 @@ class DepartmentController extends Controller
 		try {
 			//$userId = Auth::user()->id;
 
-			$record = Models\Department::where('id',$id)->first();
+			$record = Models\Designation::with('department')->where('id',$id)->first();
 			if(empty($record)){
-				return response()->json(['message' => __('Invalid Department')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Designation')], $this->warningCode); 
 			}
 			$data['record'] = $record;
 			return response()->json(['message' => __('Successful'), 'data' => $data], $this->successCode);
@@ -113,10 +113,12 @@ class DepartmentController extends Controller
 	public function update(Request $request,$id){
 		
 		try {
+			
 			DB::beginTransaction();
 			
 			$rules = [
-				'department_name'  => 'required',
+				 'designation_name'=>'required',
+				 'department'=>'required|exists:departments,id',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
@@ -130,19 +132,20 @@ class DepartmentController extends Controller
 			
 			$input = array();
 			
-			$input['name'] = $request->department_name;
+			$input['name'] = $request->designation_name;
+			$input['department'] = $request->department;
 			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Designation::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Designation.')], $this->warningCode); 
 			}
 			
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Updated Successfully";
+			$msg = "Designation Updated Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			
@@ -161,11 +164,11 @@ class DepartmentController extends Controller
 		try {
 			DB::beginTransaction();
 			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Designation::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Designation.')], $this->warningCode); 
 			}
 			
 			$input = array();
@@ -174,7 +177,7 @@ class DepartmentController extends Controller
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Deleted Successfully";
+			$msg = "Designation Deleted Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			
