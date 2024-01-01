@@ -7,6 +7,7 @@ use App\Http\Controllers\API\WagesController;
 use App\Http\Controllers\API\ContracttypeController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ShiftsController;
+use App\Http\Controllers\API\ScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,4 +59,12 @@ Route::group(['prefix' => 'shifts'], function () {
 	Route::get('/{id}/detail', [ShiftsController::class, 'detail']);
 	Route::put('{id}', [ShiftsController::class, 'update']);
 	Route::delete('{id}', [ShiftsController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'schedule'], function () {
+	Route::get('/', [ScheduleController::class, 'index']);
+	Route::post('/', [ScheduleController::class, 'store']);
+	Route::get('/{id}/detail', [ScheduleController::class, 'detail']);
+	Route::put('{id}', [ScheduleController::class, 'update']);
+	Route::delete('{id}', [ScheduleController::class, 'destroy']);
 });
