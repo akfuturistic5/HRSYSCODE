@@ -15,7 +15,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 
-class DepartmentController extends Controller
+class HolidayController extends Controller
 {
 	//test
 	public function __construct() {
@@ -30,9 +30,9 @@ class DepartmentController extends Controller
 		try {
 		
 			
-			$record = Models\Department::where('status',1)->paginate($this->limit);
+			$record = Models\Holiday::where('status',1)->paginate($this->limit);
 			if(empty($record)){
-				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
+				return response()->json(['message' => __('No Holidays found!!')], $this->warningCode); 
 			}
 			
 			return response()->json(['message' => __('Successful'), 'data' => $record], $this->successCode);
@@ -56,7 +56,9 @@ class DepartmentController extends Controller
 			$userId = Auth::user()->id;
 			
 			$rules = [
-				'department_name'  => 'required',
+				'name'=>'required|max:200',
+				'holiday_date'=>'required|date',
+				'end_date' => 'required|date|after_or_equal:holiday_date',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
@@ -66,13 +68,18 @@ class DepartmentController extends Controller
 				return response()->json(['message' => $validator->errors()->first(),'error' => $validator->errors()], 404);      
 			}
 			
+			$userId = Auth::user()->id;
+			
 			$inputTab = [
-				'name'=>$request->department_name,
+				'name'=>$request->name,
+				'holiday_date'=>$request->holiday_date,
+				'end_date' => $request->end_date,
+				'completed' => 0,
 				'status' => 1,
 				'user_id' => $userId
 			];
 			
-			$modifier = Models\Department::create($inputTab);
+			$modifier = Models\Holiday::create($inputTab);
 			
 			DB::commit();
 			
@@ -95,9 +102,9 @@ class DepartmentController extends Controller
 		try {
 			//$userId = Auth::user()->id;
 
-			$record = Models\Department::where('id',$id)->first();
+			$record = Models\Holiday::where('id',$id)->first();
 			if(empty($record)){
-				return response()->json(['message' => __('Invalid Department')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Holiday')], $this->warningCode); 
 			}
 			$data['record'] = $record;
 			return response()->json(['message' => __('Successful'), 'data' => $data], $this->successCode);
@@ -116,7 +123,9 @@ class DepartmentController extends Controller
 			DB::beginTransaction();
 			
 			$rules = [
-				'department_name'  => 'required',
+				'name'  => 'required',
+				'holiday_date'=>'date',
+				'end_date' => 'date|after_or_equal:holiday_date',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
@@ -126,23 +135,19 @@ class DepartmentController extends Controller
 				return response()->json(['message' =>$validator->errors()->first(),'error' => $validator->errors()], $this->warningCode);      
 			}
 			
-			//$input  = $request->except(['user_id']);
+			$input  = $request->except(['user_id']);
 			
-			$input = array();
-			
-			$input['name'] = $request->department_name;
-			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Holiday::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Holiday.')], $this->warningCode); 
 			}
 			
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Updated Successfully";
+			$msg = "Holiday Updated Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			
@@ -161,11 +166,11 @@ class DepartmentController extends Controller
 		try {
 			DB::beginTransaction();
 			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Holiday::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Holiday.')], $this->warningCode); 
 			}
 			
 			$input = array();
@@ -174,7 +179,7 @@ class DepartmentController extends Controller
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Deleted Successfully";
+			$msg = "Holiday Deleted Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			

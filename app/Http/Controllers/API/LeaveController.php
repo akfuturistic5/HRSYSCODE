@@ -15,7 +15,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 
-class DepartmentController extends Controller
+class LeaveController extends Controller
 {
 	//test
 	public function __construct() {
@@ -29,10 +29,41 @@ class DepartmentController extends Controller
 		
 		try {
 		
+			$leaves = Models\Leave::with(['leaveType','employee'])->where('delete_status',0);
+		
+			if(!empty($request->s_employee_id)){
+				
+				$leaves->whereHas('employee', function($q) use ($request){
+					$q->where('id', '=', $request->s_employee_id);
+				});
+			}
 			
-			$record = Models\Department::where('status',1)->paginate($this->limit);
+			if(!empty($request->s_leave_type)){
+				
+				$leaves->whereHas('leaveType', function($q) use ($request){
+					$q->where('id', '=', $request->s_leave_type);
+				});
+			}
+			
+			if(!empty($request->s_status)){
+				
+				$leaves->where('status',$request->s_status);
+			}
+			
+			if(!empty($request->s_from)){
+				
+				$leaves->where('from',$request->s_from);
+			}
+			
+			if(!empty($request->s_to)){
+				
+				$leaves->where('to',$request->s_to);
+			}
+			
+			$record = $leaves->paginate($this->limit);
+		
 			if(empty($record)){
-				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
+				return response()->json(['message' => __('No Leaves found!!')], $this->warningCode); 
 			}
 			
 			return response()->json(['message' => __('Successful'), 'data' => $record], $this->successCode);
@@ -56,23 +87,33 @@ class DepartmentController extends Controller
 			$userId = Auth::user()->id;
 			
 			$rules = [
-				'department_name'  => 'required',
+				'employee_id'=>'required',
+				'leave_type_id'=>'required',
+				'from' => 'required',
+				'to' => 'required',
+				'reason' => 'required',
+				'status' => 'required',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
 
 			if ($validator->fails()) {
 				DB::rollBack();
-				return response()->json(['message' => $validator->errors()->first(),'error' => $validator->errors()], 404);      
+				return response()->json(['message' => $validator->errors()->first(),'error' => $validator->errors()], $this->warningCode);      
 			}
 			
 			$inputTab = [
-				'name'=>$request->department_name,
+				'employee_id'=>$request->employee_id,
+				'leave_type_id'=>$request->leave_type_id,
+				'from'=>$request->from,
+				'to'=>$request->to,
+				'reason'=>$request->reason,
+				'status' => 'Approved',
 				'status' => 1,
 				'user_id' => $userId
 			];
 			
-			$modifier = Models\Department::create($inputTab);
+			$modifier = Models\Leave::create($inputTab);
 			
 			DB::commit();
 			
@@ -95,9 +136,9 @@ class DepartmentController extends Controller
 		try {
 			//$userId = Auth::user()->id;
 
-			$record = Models\Department::where('id',$id)->first();
+			$record = Models\Leave::where('id',$id)->first();
 			if(empty($record)){
-				return response()->json(['message' => __('Invalid Department')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Leave')], $this->warningCode); 
 			}
 			$data['record'] = $record;
 			return response()->json(['message' => __('Successful'), 'data' => $data], $this->successCode);
@@ -116,7 +157,7 @@ class DepartmentController extends Controller
 			DB::beginTransaction();
 			
 			$rules = [
-				'department_name'  => 'required',
+				'leave_type_id'  => 'required',
 			];
 
 			$validator = Validator::make($request->all(), $rules);
@@ -126,23 +167,19 @@ class DepartmentController extends Controller
 				return response()->json(['message' =>$validator->errors()->first(),'error' => $validator->errors()], $this->warningCode);      
 			}
 			
-			//$input  = $request->except(['user_id']);
+			$input  = $request->except(['user_id']);
 			
-			$input = array();
-			
-			$input['name'] = $request->department_name;
-			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Leave::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Leave.')], $this->warningCode); 
 			}
 			
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Updated Successfully";
+			$msg = "Leave Updated Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			
@@ -161,20 +198,20 @@ class DepartmentController extends Controller
 		try {
 			DB::beginTransaction();
 			
-			$record = Models\Department::where('id',$id);
+			$record = Models\Leave::where('id',$id);
 			$record = $record->first();
 			if(empty($record)){
 				DB::rollBack();
-				return response()->json(['message' => __('Invalid Department.')], $this->warningCode); 
+				return response()->json(['message' => __('Invalid Leave.')], $this->warningCode); 
 			}
 			
 			$input = array();
-			$input['status'] = 0;
+			$input['delete_status'] = 1;
 			
 			$record->update($input);
 			DB::commit();
 			
-			$msg = "Department Deleted Successfully";
+			$msg = "Leave Deleted Successfully";
 			
 			return response()->json(['message' => __($msg)], $this->successCode);
 			
