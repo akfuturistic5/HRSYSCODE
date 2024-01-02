@@ -3,12 +3,16 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\DepartmentController;
+use App\Http\Controllers\API\WagesController;
+use App\Http\Controllers\API\ContracttypeController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ShiftsController;
+use App\Http\Controllers\API\ScheduleController;
+use App\Http\Controllers\API\OvertimeController;
+
 use App\Http\Controllers\API\DesignationController;
 use App\Http\Controllers\API\HolidayController;
 use App\Http\Controllers\API\LeaveController;
-use App\Http\Controllers\API\WagesController;
-use App\Http\Controllers\API\ContracttypeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -82,4 +86,27 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 
 });
 
+Route::group(['prefix' => 'shifts'], function () {
+	Route::get('/', [ShiftsController::class, 'index']);
+	Route::post('/', [ShiftsController::class, 'store']);
+	Route::get('/{id}/detail', [ShiftsController::class, 'detail']);
+	Route::put('{id}', [ShiftsController::class, 'update']);
+	Route::delete('{id}', [ShiftsController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'schedule'], function () {
+	Route::get('/', [ScheduleController::class, 'index']);
+	Route::post('/', [ScheduleController::class, 'store']);
+	Route::get('/{id}/detail', [ScheduleController::class, 'detail']);
+	Route::put('{id}', [ScheduleController::class, 'update']);
+	Route::delete('{id}', [ScheduleController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'overtime'], function () {
+	Route::get('/', [OvertimeController::class, 'index']);
+	Route::post('/', [OvertimeController::class, 'store']);
+	Route::get('/{id}/detail', [OvertimeController::class, 'detail']);
+	Route::put('{id}', [OvertimeController::class, 'update']);
+	Route::delete('{id}', [OvertimeController::class, 'destroy']);
+});
 
