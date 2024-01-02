@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 	
 Route::group(['prefix' => 'departments'], function () {
 	Route::get('/', [DepartmentController::class, 'index']);
+	Route::get('/all', [DepartmentController::class, 'listall']);
 	Route::post('/', [DepartmentController::class, 'store']);
 	Route::get('/{id}/detail', [DepartmentController::class, 'detail']);
 	Route::put('{id}', [DepartmentController::class, 'update']);

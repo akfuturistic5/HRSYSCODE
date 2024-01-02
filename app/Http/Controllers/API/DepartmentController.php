@@ -28,9 +28,15 @@ class DepartmentController extends Controller
 	public function index(Request $request){
 		
 		try {
-		
 			
-			$record = Models\Department::where('status',1)->paginate($this->limit);
+			$perpage = $this->limit;
+			
+			if(!empty($request->per_page)){
+				$perpage = $request->per_page;
+			}
+			
+			
+			$record = Models\Department::where('status',1)->orderBy('id','desc')->paginate($perpage);
 			if(empty($record)){
 				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
 			}
@@ -46,6 +52,29 @@ class DepartmentController extends Controller
 			return response()->json(['message'=>$exception->getMessage()], $this->warningCode);
 		}
 	}
+	
+	public function listall(Request $request){
+		
+		try {
+			
+			
+			$record = Models\Department::where('status',1)->orderBy('name','asc')->get();
+			if(empty($record)){
+				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
+			}
+			
+			return response()->json(['message' => __('Successful'), 'data' => $record], $this->successCode);
+			
+		}catch (\Illuminate\Database\QueryException $exception){
+			
+			return response()->json(['message'=>$exception->getMessage()], $this->warningCode);
+			
+		}catch(\Exception $exception){
+			
+			return response()->json(['message'=>$exception->getMessage()], $this->warningCode);
+		}
+	}
+	
 	
 	public function store(Request $request){
 		

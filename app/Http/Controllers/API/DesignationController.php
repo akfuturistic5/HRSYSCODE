@@ -28,7 +28,13 @@ class DesignationController extends Controller
 		
 		try {
 			
-			$record = Models\Designation::with('department')->where('status',1)->orderBy('id','desc')->paginate($this->limit);
+			$perpage = $this->limit;
+			
+			if(!empty($request->per_page)){
+				$perpage = $request->per_page;
+			}
+			
+			$record = Models\Designation::with('department')->where('status',1)->orderBy('id','desc')->paginate($perpage);
 			if(empty($record)){
 				return response()->json(['message' => __('No Department found!!')], $this->warningCode); 
 			}
