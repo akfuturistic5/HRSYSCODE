@@ -8,6 +8,8 @@ use App\Http\Controllers\API\ContracttypeController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ShiftsController;
 use App\Http\Controllers\API\ScheduleController;
+use App\Http\Controllers\API\OvertimeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -67,4 +69,12 @@ Route::group(['prefix' => 'schedule'], function () {
 	Route::get('/{id}/detail', [ScheduleController::class, 'detail']);
 	Route::put('{id}', [ScheduleController::class, 'update']);
 	Route::delete('{id}', [ScheduleController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'overtime'], function () {
+	Route::get('/', [OvertimeController::class, 'index']);
+	Route::post('/', [OvertimeController::class, 'store']);
+	Route::get('/{id}/detail', [OvertimeController::class, 'detail']);
+	Route::put('{id}', [OvertimeController::class, 'update']);
+	Route::delete('{id}', [OvertimeController::class, 'destroy']);
 });
