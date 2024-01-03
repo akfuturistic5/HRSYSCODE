@@ -29,8 +29,13 @@ class HolidayController extends Controller
 		
 		try {
 		
+			$perpage = $this->limit;
 			
-			$record = Models\Holiday::where('status',1)->paginate($this->limit);
+			if(!empty($request->per_page)){
+				$perpage = $request->per_page;
+			}
+			
+			$record = Models\Holiday::where('status',1)->paginate($perpage);
 			if(empty($record)){
 				return response()->json(['message' => __('No Holidays found!!')], $this->warningCode); 
 			}

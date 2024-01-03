@@ -139,7 +139,7 @@ class DesignationController extends Controller
 			$input = array();
 			
 			$input['name'] = $request->designation_name;
-			$input['department'] = $request->department;
+			$input['department_id'] = $request->department;
 			
 			$record = Models\Designation::where('id',$id);
 			$record = $record->first();
