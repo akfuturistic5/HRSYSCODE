@@ -9,6 +9,8 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ShiftsController;
 use App\Http\Controllers\API\ScheduleController;
 use App\Http\Controllers\API\OvertimeController;
+use App\Http\Controllers\API\ProjectController;
+use App\Http\Controllers\API\TimesheetController;
 
 use App\Http\Controllers\API\DesignationController;
 use App\Http\Controllers\API\HolidayController;
@@ -110,4 +112,19 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 		Route::delete('{id}', [OvertimeController::class, 'destroy']);
 	});	
 
-});
+	Route::group(['prefix' => 'project'], function () {
+		Route::get('/', [ProjectController::class, 'index']);
+		Route::post('/', [ProjectController::class, 'store']);
+		Route::get('/{id}/detail', [ProjectController::class, 'detail']);
+		Route::put('{id}', [ProjectController::class, 'update']);
+		Route::delete('{id}', [ProjectController::class, 'destroy']);
+	});
+
+	Route::group(['prefix' => 'timesheet'], function () {
+		Route::get('/', [TimesheetController::class, 'index']);
+		Route::post('/', [TimesheetController::class, 'store']);
+		Route::get('/{id}/detail', [TimesheetController::class, 'detail']);
+		Route::put('{id}', [TimesheetController::class, 'update']);
+		Route::delete('{id}', [TimesheetController::class, 'destroy']);
+	});
+});	
