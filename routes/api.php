@@ -15,6 +15,7 @@ use App\Http\Controllers\API\TimesheetController;
 use App\Http\Controllers\API\DesignationController;
 use App\Http\Controllers\API\HolidayController;
 use App\Http\Controllers\API\LeaveController;
+use App\Http\Controllers\API\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,7 +37,7 @@ Route::post('/adminlogin', [UserController::class, 'adminlogin']);
 Route::get('/createuser', [UserController::class, 'createuser']);
 
 Route::group(['middleware' => ['auth:superadmin-api']], function () {
-	
+
 	Route::group(['prefix' => 'departments'], function () {
 		Route::get('/', [DepartmentController::class, 'index']);
 		Route::get('/all', [DepartmentController::class, 'listall']);
@@ -95,7 +96,7 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 		Route::put('{id}', [ShiftsController::class, 'update']);
 		Route::delete('{id}', [ShiftsController::class, 'destroy']);
 	});
-	
+
 	Route::group(['prefix' => 'schedule'], function () {
 		Route::get('/', [ScheduleController::class, 'index']);
 		Route::post('/', [ScheduleController::class, 'store']);
@@ -103,14 +104,14 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 		Route::put('{id}', [ScheduleController::class, 'update']);
 		Route::delete('{id}', [ScheduleController::class, 'destroy']);
 	});
-	
+
 	Route::group(['prefix' => 'overtime'], function () {
 		Route::get('/', [OvertimeController::class, 'index']);
 		Route::post('/', [OvertimeController::class, 'store']);
 		Route::get('/{id}/detail', [OvertimeController::class, 'detail']);
 		Route::put('{id}', [OvertimeController::class, 'update']);
 		Route::delete('{id}', [OvertimeController::class, 'destroy']);
-	});	
+	});
 
 	Route::group(['prefix' => 'project'], function () {
 		Route::get('/', [ProjectController::class, 'index']);
@@ -127,4 +128,36 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 		Route::put('{id}', [TimesheetController::class, 'update']);
 		Route::delete('{id}', [TimesheetController::class, 'destroy']);
 	});
-});	
+
+    Route::group(['prefix' => 'employee'], function () {
+        Route::get('/', [EmployeeController::class, 'index']);
+        Route::post('/', [EmployeeController::class, 'store']);
+        Route::get('{id}',[EmployeeController::class,'getEmployeeDetails']);
+        Route::put('{id}',[EmployeeController::class,'update']);
+        Route::delete('{id}',[EmployeeController::class,'deActiveEmployee']);
+
+        Route::group(['prefix' => 'profile'], function () {
+            Route::put('{id}',[EmployeeController::class,'updateProfile']);
+
+            Route::group(['prefix' => 'personal'], function () {
+                Route::put('{id}',[EmployeeController::class,'updatePersonalProfile']);
+            });
+
+            Route::group(['prefix' => 'emergency-contact'], function () {
+                Route::get('{id}',[EmployeeController::class,'getEmployeeEmergencyContactById']);
+                Route::post('{id}',[EmployeeController::class,'addEmployeeEmergencyContact']);
+                Route::put('{id}',[EmployeeController::class,'updateEmployeeEmergencyContact']);
+            });
+
+            Route::group(['prefix' => 'bank-detail'], function () {
+                Route::get('{id}',[EmployeeController::class,'getEmployeeBankDetails']);
+                Route::post('{id}',[EmployeeController::class,'createEmployeeBankDetail']);
+                Route::put('{id}',[EmployeeController::class,'updateEmployeeBankDetail']);
+            });
+        });
+    });
+
+
+});
+
+
