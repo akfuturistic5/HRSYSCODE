@@ -109,7 +109,6 @@ class LeaveController extends Controller
 				'to'=>$request->to,
 				'reason'=>$request->reason,
 				'status' => 'Approved',
-				'status' => 1,
 				'user_id' => $userId
 			];
 			

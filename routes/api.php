@@ -14,6 +14,7 @@ use App\Http\Controllers\API\DesignationController;
 use App\Http\Controllers\API\HolidayController;
 use App\Http\Controllers\API\LeaveController;
 use App\Http\Controllers\API\LeaveTypeController;
+use App\Http\Controllers\API\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -72,6 +73,10 @@ Route::group(['middleware' => ['auth:superadmin-api']], function () {
 	
 	Route::group(['prefix' => 'leavetypes'], function () {
 		Route::get('/all', [LeaveTypeController::class, 'listall']);
+	});
+	
+	Route::group(['prefix' => 'employees'], function () {
+		Route::get('/all', [EmployeeController::class, 'listall']);
 	});
 
 	Route::group(['prefix' => 'wages'], function () {
